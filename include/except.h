@@ -45,6 +45,7 @@ enum {
 // stack-top pointer
 extern struct except_frame* except_stack;
 
+// definition in assert.c
 extern const struct except_t assert_failed;
 
 /*
