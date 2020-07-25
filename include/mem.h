@@ -1,7 +1,9 @@
 #ifndef MEM_INCLUDE
 #define MEM_INCLUDE
 
-// definition in mem.c
+#include <stdio.h>
+
+// definition in implementation file
 extern const struct except_t mem_failed;
 
 /*
@@ -54,6 +56,17 @@ extern void *Mem_resize(void *ptr, long nbytes, const char *file, int line);
         errors.
 */
 extern void Mem_free(void *ptr, const char *file, int line);
+
+/*
+    Mem_set_log:
+        1. Set the mem_log_stm to stm.
+        2. By default, mem_log_stm will be NULL and the Mem_resize() and Mem_free()
+        will raise assert_failed.
+        3. Only implemented in memchk.c.
+        4. Use Mem_log(NULL) to close the logger.
+
+*/
+extern void Mem_log(FILE *stm);
 
 #define ALLOC(nbytes) Mem_alloc((nbytes), __FILE__, __LINE__)
 #define CALLOC(count, nbytes) Mem_calloc((count), (nbytes), __FILE__, __LINE__)

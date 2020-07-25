@@ -10,16 +10,19 @@
 // 2^128 = 340 282 366 920 938 463 463 374 607 431 768 211 456
 // for 128-bits
 #define ATOM_INT_MAX_LENGTH 43
+
 // size of the atom bucket
 #define ATOM_BUCKET_SIZE 2039
 #define ATOM_BUCKET_DEFAULT_CAPCITY ATOM_BUCKET_SIZE
+
 // BKDR hash function seed
 // 31 131 1313 13131 131313 etc..
 #define BKDR_HASH_SEED 131
+
 // calculate the size of an array
 #define ARR_N_ELEMS(arr) (sizeof(arr) / sizeof((arr)[0]))
 
-static struct atom {
+struct atom {
     struct atom *link;  // pointer to the next atom
     int len;            // length of byte sequence
     // char *str;
@@ -31,8 +34,10 @@ static struct atom {
 // bucket is an array of pointers tol lists of entries,
 // which holds one atom.
 static struct atom *bucket[ATOM_BUCKET_SIZE];
+
 // capacity of atom table
 static int capacity = ATOM_BUCKET_DEFAULT_CAPCITY;
+
 // current size of atom table
 static int size = 0;
 
@@ -47,7 +52,7 @@ static unsigned long hash(const char *str) {
     unsigned long h;
     int i;
 
-    assert(str);
+    assert(str != NULL);
     for (h = 0, i = 0; str[i] != '\0'; i++) {
         h = h * BKDR_HASH_SEED + str[i];
     }
@@ -113,7 +118,7 @@ const char *Atom_new(const char *str, int len) {
     int i;
     struct atom *p;
 
-    assert(str);
+    assert(str != NULL);
     assert(len >= 0);
 
     // get hash value
@@ -144,7 +149,7 @@ const char *Atom_new(const char *str, int len) {
 }
 
 const char *Atom_string(const char *str) {
-    assert(str);
+    assert(str != NULL);
     return Atom_new(str, strlen(str));
 }
 
@@ -186,7 +191,7 @@ void Atom_vload(const char *str, ...) {
 void Atom_aload(const char *strs[]) {
     int len, i;
 
-    assert(strs == NULL);
+    assert(strs != NULL);
 
     len = ARR_N_ELEMS(strs);
     for (i = 0; i < len; i++) {

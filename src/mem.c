@@ -1,3 +1,10 @@
+/*
+    Production Implementation
+    In the production implementation, the routines encapsulate calls to the
+    memory-management functions in the standard library in the safer package
+    specified by the Mem interface
+*/
+
 #include "mem.h"
 
 #include <stddef.h>
@@ -9,9 +16,8 @@
 const struct except_t mem_failed = {"Allocation Failed"};
 
 /*
-    All the implementation is simple. 
+    All the implementation is simple.
 */
-
 
 void *Mem_alloc(long nbytes, const char *file, int line) {
     void *ptr;
@@ -48,11 +54,11 @@ void *Mem_calloc(long count, long nbytes, const char *file, int line) {
 }
 
 void Mem_free(void *ptr, const char *file, int line) {
-    if (ptr) free(ptr);
+    if (ptr != NULL) free(ptr);
 }
 
 void *Mem_resize(void *ptr, long nbytes, const char *file, int line) {
-    assert(ptr);
+    assert(ptr != NULL);
     assert(nbytes > 0);
 
     ptr = realloc(ptr, nbytes);
