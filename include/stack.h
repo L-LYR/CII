@@ -2,6 +2,16 @@
 #define STACK_INCLUDED
 #include <stdbool.h>
 
+struct elem {
+    void *x;
+    struct elem *link;
+};
+
+struct stack_t {
+    int count;
+    struct elem *head;
+};
+
 extern struct stack_t *Stack_new(void);
 extern bool Stack_empty(const struct stack_t *stk);
 extern void Stack_push(struct stack_t *stk, void *x);

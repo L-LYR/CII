@@ -6,16 +6,6 @@
 #include "assert.h"
 #include "mem.h"
 
-struct elem {
-    void *x;
-    struct elem *link;
-};
-
-struct stack_t {
-    int count;
-    struct elem *head;
-};
-
 struct stack_t *Stack_new(void) {
     struct stack_t *stk;
 

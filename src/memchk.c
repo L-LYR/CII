@@ -14,6 +14,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "align.h"
 #include "assert.h"
 #include "except.h"
 #include "mem.h"
@@ -34,19 +35,6 @@ struct descriptor {
     long size;                // size of block
     const char *file;         // location
     int line;
-};
-
-// for boundary alignment
-union align {
-    int i;
-    long l;
-    long long ll;
-    long *lp;
-    void *p;
-    void (*fp)(void);
-    float f;
-    double d;
-    long double ld;
 };
 
 // invalid operations in Mem_resize and Mem_free
@@ -138,9 +126,7 @@ void *Mem_alloc(long nbytes, const char *file, int line) {
     assert(nbytes > 0);
 
     // round nbytes up to an alignment boundary
-
-    nbytes = ((nbytes + sizeof(union align) - 1) / sizeof(union align)) *
-             sizeof(union align);
+    nbytes = ROUND_UP_TO_ALIGN_BOUND(nbytes);
 
     for (bp = free_block_list.free; bp != NULL; bp = bp->free) {
         if (bp->size > nbytes) {
