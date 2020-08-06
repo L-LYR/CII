@@ -7,6 +7,9 @@
     TODO:
         1. How to detect and remove such blocks whose size is less than sizeof(align).
         2. Mem_leak().
+    
+    For the first one, I think it is impossible, because this lib is not the implementation 
+    of malloc() and free(), but the capsulation of them, I can't free the certain blocks.
 */
 
 #include <stdbool.h>
