@@ -222,7 +222,6 @@ void List_free(struct list_t** list) {
         FREE(del);
     }
     FREE(*list);
-    *list = NULL;
 }
 
 void List_map(struct list_t* list, void (*apply)(void** x, void* cl), void* cl) {

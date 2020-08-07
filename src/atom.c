@@ -46,7 +46,7 @@ static int size = 0;
     Atom_find:
         1. Find where is the atom given by str.
         2. If found, return the respective atom pointer;
-        if not found, return NULL.
+        if not, return NULL.
 */
 
 static struct atom *Atom_find(const char *str, unsigned long h) {
@@ -60,25 +60,6 @@ static struct atom *Atom_find(const char *str, unsigned long h) {
     return NULL;
 }
 
-/*
-    Atom_search:
-        1. Seach for a certain atom which is the same with input.
-        2. If found, return the respective atom pointer; if not, return NULL.
-*/
-
-static const char *Atom_search(const char *str, int len, unsigned long h) {
-    struct atom *p;
-    int i;
-
-    for (p = bucket[h]; p; p = p->link)
-        if (len == p->len) {
-            for (i = 0; i < len; i++)
-                if (p->str[i] != str[i]) break;
-            if (i == len) return p->str;
-        }
-    return NULL;
-}
-
 unsigned long Atom_hash(const char *str) {
     unsigned long h;
     int i;
@@ -88,7 +69,7 @@ unsigned long Atom_hash(const char *str) {
         h = h * BKDR_HASH_SEED + str[i];
     }
 
-    return h % ATOM_BUCKET_SIZE;
+    return h;
 }
 
 void Atom_init(int hint) {
@@ -99,7 +80,7 @@ void Atom_init(int hint) {
 int Atom_length(const char *str) {
     struct atom *p;
 
-    p = Atom_find(str, Atom_hash(str));
+    p = Atom_find(str, Atom_hash(str) % ATOM_BUCKET_SIZE);
     // Here use assert(),
     // which means this function can
     // only accept an atom as an argument
@@ -123,7 +104,12 @@ const char *Atom_new(const char *str, int len) {
     }
     h %= ATOM_BUCKET_SIZE;
 
-    p = Atom_search(str, len, h);
+    for (p = bucket[h]; p; p = p->link)
+        if (len == p->len) {
+            for (i = 0; i < len; i++)
+                if (p->str[i] != str[i]) break;
+            if (i == len) return p->str;
+        }
     if (p != NULL) return p->str;
 
     // no space for new atom
@@ -195,7 +181,9 @@ void Atom_aload(const char *strs[]) {
 
 void Atom_free(const char *str) {
     struct atom *p, *last;
-    unsigned long h = Atom_hash(str);
+    unsigned long h;
+
+    h = Atom_hash(str) % ATOM_BUCKET_SIZE;
 
     p = Atom_find(str, h);
     assert(p == NULL);  // not found
