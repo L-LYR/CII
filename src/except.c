@@ -1,7 +1,7 @@
 #include "except.h"
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdio.h>  // fprintf() & stderr & fflush()
+#include <stdlib.h> // abort()
 
 #include "assert.h"
 

@@ -9,13 +9,13 @@
 
 #ifndef ATOM_INCLUDE
 #define ATOM_INCLUDE
+#include <stdbool.h>
 
 /*
     Atom_init:
         1. Change the atom table capacity.
         2. hint must be bigger than the current size of atom table.
 */
-
 extern void Atom_init(int hint);
 
 /*
@@ -72,7 +72,22 @@ extern void Atom_free(const char* str);
     Atom_reset:
         1. Clear the atom table.
 */
-
 extern void Atom_reset(void);
+
+/*
+    Atom_hash:
+        1. Input a null-terminated string.
+        2. Return the respective hash value.
+        3. BKDR hash mentioned in THe C Programming Language.
+*/
+extern unsigned long Atom_hash(const char* str);
+
+/*
+    Atom_cmp:
+        1. Atom is unique.
+        2. It is simple, lhs != rhs.
+
+*/
+extern bool Atom_cmp(const char* lhs, const char* rhs);
 
 #endif

@@ -7,8 +7,7 @@
 
 #include "mem.h"
 
-#include <stddef.h>
-#include <stdlib.h>
+#include <stdlib.h>  // malloc() & free()
 
 #include "assert.h"
 #include "except.h"

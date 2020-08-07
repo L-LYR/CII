@@ -16,7 +16,7 @@
 #ifndef EXCEPT_INCLUDE
 #define EXCEPT_INCLUDE
 
-#include <setjmp.h>
+#include <setjmp.h> // setjmp() & longjmp() & jmp_buf 
 
 struct except_t {
     char* reason;

@@ -1,7 +1,6 @@
 #include "stack.h"
 
-#include <stdbool.h>
-#include <stddef.h>
+#include <stdbool.h>  // bool type
 
 #include "assert.h"
 #include "mem.h"

@@ -1,7 +1,6 @@
 #include "list.h"
 
-#include <stdarg.h>
-#include <stddef.h>
+#include <stdarg.h>  // va_list & va_start() & va_end() & va_arg()
 
 #include "algo.h"
 #include "assert.h"
@@ -226,7 +225,7 @@ void List_free(struct list_t** list) {
     *list = NULL;
 }
 
-void List_map(struct list_t* list, void(apply)(void** x, void* cl), void* cl) {
+void List_map(struct list_t* list, void (*apply)(void** x, void* cl), void* cl) {
     assert(apply != NULL);
 
     struct node_t* p;

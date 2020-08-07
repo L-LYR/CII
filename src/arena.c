@@ -1,7 +1,7 @@
 #include "arena.h"
 
-#include <stdlib.h>
-#include <string.h>
+#include <stdlib.h>  // malloc() & free()
+#include <string.h>  // memset()
 
 #include "align.h"
 #include "assert.h"
@@ -13,6 +13,12 @@
 
 // threshold for free chunk list
 #define THRESHOLD 10
+
+struct arena_t {
+    struct arena_t* prev;  // previous chunk
+    char* avail;           // begin of chunk
+    char* limit;           // end of the chunk
+};
 
 // Make sure that arena->avail is set to a properly
 // aligned address for the first allocation in this
@@ -115,7 +121,9 @@ void* Arena_calloc(struct arena_t* arena, long count, long nbytes, const char* f
 void Arena_free(struct arena_t* arena) {
     assert(arena != NULL);
     while (arena->prev != NULL) {
-        struct arena_t tmp = *(arena->prev);
+        struct arena_t tmp;
+
+        tmp = *(arena->prev);
         if (nfree > THRESHOLD) {
             arena->prev->prev = free_chunk_list;
             free_chunk_list = arena->prev;

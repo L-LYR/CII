@@ -1,7 +1,7 @@
 #ifndef MEM_INCLUDE
 #define MEM_INCLUDE
 
-#include <stdio.h>
+#include <stdio.h>  // FILE
 
 // definition in implementation file
 extern const struct except_t mem_failed;

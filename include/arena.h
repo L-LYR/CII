@@ -18,11 +18,7 @@
 
 #include "except.h"
 
-struct arena_t {
-    struct arena_t *prev;  // previous chunk
-    char *avail;           // begin of chunk
-    char *limit;           // end of the chunk
-};
+struct arena_t;
 
 extern const struct except_t arena_new_failed;
 extern const struct except_t arena_failed;

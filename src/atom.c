@@ -1,8 +1,9 @@
 #include "atom.h"
 
-#include <limits.h>  // LONG_MAX & LONG_MIN
-#include <stdarg.h>  // va_list & va_start() & va_end() & va_arg()
-#include <string.h>  // strcmp() & strlen()
+#include <limits.h>   // LONG_MAX & LONG_MIN
+#include <stdarg.h>   // va_list & va_start() & va_end() & va_arg()
+#include <stdbool.h>  // bool type
+#include <string.h>   // strcmp() & strlen() & memset()
 
 #include "assert.h"
 #include "mem.h"
@@ -42,25 +43,6 @@ static int capacity = ATOM_BUCKET_DEFAULT_CAPCITY;
 static int size = 0;
 
 /*
-    hash:
-        1. Input a null-terminated string.
-        2. Return the respective hash value.
-        3. BKDR hash mentioned in THe C Programming Language.
-*/
-
-static unsigned long hash(const char *str) {
-    unsigned long h;
-    int i;
-
-    assert(str != NULL);
-    for (h = 0, i = 0; str[i] != '\0'; i++) {
-        h = h * BKDR_HASH_SEED + str[i];
-    }
-
-    return h % ATOM_BUCKET_SIZE;
-}
-
-/*
     Atom_find:
         1. Find where is the atom given by str.
         2. If found, return the respective atom pointer;
@@ -97,6 +79,18 @@ static const char *Atom_search(const char *str, int len, unsigned long h) {
     return NULL;
 }
 
+unsigned long Atom_hash(const char *str) {
+    unsigned long h;
+    int i;
+
+    assert(str != NULL);
+    for (h = 0, i = 0; str[i] != '\0'; i++) {
+        h = h * BKDR_HASH_SEED + str[i];
+    }
+
+    return h % ATOM_BUCKET_SIZE;
+}
+
 void Atom_init(int hint) {
     assert(hint < size);  // invalid capacity
     capacity = hint;
@@ -105,7 +99,7 @@ void Atom_init(int hint) {
 int Atom_length(const char *str) {
     struct atom *p;
 
-    p = Atom_find(str, hash(str));
+    p = Atom_find(str, Atom_hash(str));
     // Here use assert(),
     // which means this function can
     // only accept an atom as an argument
@@ -123,7 +117,7 @@ const char *Atom_new(const char *str, int len) {
 
     // get hash value
     // Maybe len is less than strlen(str) or str is not null-terminated,
-    // so here we don't use hash(str).
+    // so here we don't use Atom_hash(str).
     for (h = 0, i = 0; i < len; i++) {
         h = h * BKDR_HASH_SEED + str[i];
     }
@@ -201,7 +195,7 @@ void Atom_aload(const char *strs[]) {
 
 void Atom_free(const char *str) {
     struct atom *p, *last;
-    unsigned long h = hash(str);
+    unsigned long h = Atom_hash(str);
 
     p = Atom_find(str, h);
     assert(p == NULL);  // not found
@@ -237,4 +231,8 @@ void Atom_reset(void) {
     memset(bucket, NULL, sizeof(struct atom *) * ATOM_BUCKET_SIZE);
 
     size = 0;
+}
+
+bool Atom_cmp(const char *lhs, const char *rhs) {
+    return lhs != rhs;
 }

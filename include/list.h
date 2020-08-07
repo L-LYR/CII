@@ -4,7 +4,7 @@
 
 #ifndef LIST_INCLUDE
 #define LIST_INCLUDE
-#include <stdbool.h>
+#include <stdbool.h> // bool type
 
 struct list_t;
 
@@ -35,7 +35,7 @@ extern void List_free(struct list_t** list);
                 *ptr = NULL;
             }
 */
-extern void List_map(struct list_t* list, void(apply)(void** x, void* cl), void* cl);
+extern void List_map(struct list_t* list, void (*apply)(void** x, void* cl), void* cl);
 
 /*
     List_to_array:
@@ -43,6 +43,7 @@ extern void List_map(struct list_t* list, void(apply)(void** x, void* cl), void*
         2. Copy the pointers into the array.
         3. Never return NULL.
         4. The end of the array which will be returned is up to clients.
+        5. Clients must remember to free the returned array.
 */
 extern void** List_to_array(struct list_t* list, void* end);
 

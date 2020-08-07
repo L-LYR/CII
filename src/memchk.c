@@ -12,10 +12,10 @@
     of malloc() and free(), but the capsulation of them, I can't free the certain blocks.
 */
 
-#include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <stdbool.h>  // bool type
+#include <stdio.h>    // fprintf() & FILE
+#include <stdlib.h>   // malloc() & free()
+#include <string.h>   // memset()
 
 #include "align.h"
 #include "assert.h"

@@ -1,6 +1,6 @@
 #ifndef STACK_INCLUDED
 #define STACK_INCLUDED
-#include <stdbool.h>
+#include <stdbool.h> // bool type
 
 struct elem {
     void *x;
