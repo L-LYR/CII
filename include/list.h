@@ -4,10 +4,18 @@
 
 #ifndef LIST_INCLUDE
 #define LIST_INCLUDE
-#include <stdbool.h> // bool type
 
-struct list_t;
+struct node_t {
+    struct node_t* prev;
+    struct node_t* next;
+    void* data;
+};
 
+struct list_t {
+    struct node_t* tail;
+    struct node_t* head;
+    int len;
+};
 /*
     List_create:
         1. Creation of a list.
@@ -23,7 +31,7 @@ extern void* List_pop_back(struct list_t* list);
 extern void List_push_front(struct list_t* list, void* x);
 extern void* List_pop_front(struct list_t* list);
 extern void List_reverse(struct list_t* list);
-extern bool List_remove(struct list_t* list, void* x);  // remove the first one
+extern int List_remove(struct list_t* list, void* x);  // remove the first one
 extern void List_free(struct list_t** list);
 
 /*

@@ -6,7 +6,25 @@
 #ifndef TABLE_INCLUDE
 #define TABLE_INCLUDE
 
-struct table_t;
+struct binding {
+    struct binding *link;
+    const void *key;
+    void *value;
+};
+
+struct table_t {
+    // features
+    int capacity;
+    int size;
+    unsigned long time_stamp;
+
+    // function pointers
+    int (*cmp)(const void *x, const void *y);
+    unsigned long (*hash)(const void *key);
+
+    // flexible array members
+    struct binding **buckets;
+};
 
 /*
     Table_create:

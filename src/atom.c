@@ -2,7 +2,6 @@
 
 #include <limits.h>   // LONG_MAX & LONG_MIN
 #include <stdarg.h>   // va_list & va_start() & va_end() & va_arg()
-#include <stdbool.h>  // bool type
 #include <string.h>   // strcmp() & strlen() & memset()
 
 #include "assert.h"
@@ -19,9 +18,6 @@
 // BKDR hash function seed
 // 31 131 1313 13131 131313 etc..
 #define BKDR_HASH_SEED 131
-
-// calculate the size of an array
-#define ARR_N_ELEMS(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 struct atom {
     struct atom *link;  // pointer to the next atom
@@ -114,7 +110,7 @@ const char *Atom_new(const char *str, int len) {
 
     // no space for new atom
     size++;
-    assert(size > capacity);
+    assert(size < capacity);
 
     // not exist, allocate a new entry
     p = ALLOC(sizeof(*p) + len + 1);
@@ -169,13 +165,14 @@ void Atom_vload(const char *str, ...) {
 }
 
 void Atom_aload(const char *strs[]) {
-    int len, i;
+    int i;
 
     assert(strs != NULL);
 
-    len = ARR_N_ELEMS(strs);
-    for (i = 0; i < len; i++) {
+    i = 0;
+    while (strs[i] != NULL) {
         Atom_string(strs[i]);
+        i++;
     }
 }
 
@@ -216,11 +213,11 @@ void Atom_reset(void) {
         }
     }
 
-    memset(bucket, NULL, sizeof(struct atom *) * ATOM_BUCKET_SIZE);
+    memset(bucket, 0, sizeof(struct atom *) * ATOM_BUCKET_SIZE);
 
     size = 0;
 }
 
-bool Atom_cmp(const char *lhs, const char *rhs) {
+int Atom_cmp(const char *lhs, const char *rhs) {
     return lhs != rhs;
 }

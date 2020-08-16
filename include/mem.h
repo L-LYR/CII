@@ -38,7 +38,7 @@ extern void *Mem_calloc(long count, long nbytes, const char *file, int line);
         3. Mem_resize expands or contracts the block so that it holds at
         least nbytes of memory, suitably aligned, and returns a pointer
         to the resized block.
-        4. If Mem_resize cannot allocate the new block, it raises  Mem_Failed,
+        4. If Mem_resize cannot allocate the new block, it raises Mem_Failed,
         with file and line as the exception coordinates.
 */
 extern void *Mem_resize(void *ptr, long nbytes, const char *file, int line);

@@ -14,12 +14,6 @@
 // threshold for free chunk list
 #define THRESHOLD 10
 
-struct arena_t {
-    struct arena_t* prev;  // previous chunk
-    char* avail;           // begin of chunk
-    char* limit;           // end of the chunk
-};
-
 // Make sure that arena->avail is set to a properly
 // aligned address for the first allocation in this
 // new chunk.

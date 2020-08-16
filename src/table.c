@@ -7,26 +7,6 @@
 #include "atom.h"
 #include "mem.h"
 
-struct binding {
-    struct binding *link;
-    const void *key;
-    void *value;
-};
-
-struct table_t {
-    // features
-    int capacity;
-    int size;
-    unsigned long time_stamp;
-
-    // function pointers
-    int (*cmp)(const void *x, const void *y);
-    unsigned long (*hash)(const void *key);
-
-    // flexible array members
-    struct binding **buckets;
-};
-
 // Size of table
 // Table_create will choose the greatest value which is less than hint
 static int primes[] = {
@@ -56,8 +36,16 @@ struct table_t *Table_create(int hint,
 
     table = ALLOC(sizeof(*table) + hint * sizeof(table->buckets[0]));
     table->capacity = hint;
-    table->cmp = (cmp == NULL) ? Atom_cmp : cmp;
-    table->hash = (hash == NULL) ? Atom_hash : hash;
+    // table->cmp = ((cmp == NULL) ? (Atom_cmp) : (cmp));
+    // table->hash = ((hash == NULL) ? (Atom_hash) : (hash));
+    if (cmp == NULL)
+        table->cmp = Atom_cmp;
+    else
+        table->cmp = cmp;
+    if (hash == NULL)
+        table->hash = Atom_hash;
+    else
+        table->hash = hash;
     table->buckets = (struct binding **)(table + 1);
     memset(table->buckets, 0, sizeof(table->buckets[0]) * hint);
     table->size = 0;
@@ -67,7 +55,8 @@ struct table_t *Table_create(int hint,
 }
 
 void Table_free(struct table_t **table) {
-    assert(table != NULL && *table != NULL);
+    assert(table != NULL);
+    assert(*table != NULL);
 
     if ((*table)->size > 0) {
         int i;
@@ -173,10 +162,10 @@ void **Table_to_array(struct table_t *table, void *end) {
     assert(table != NULL);
 
     arr = ALLOC((2 * table->size + 1) * sizeof(*arr));
-    for (i = 0, j = 0; i < table->size; i++) {
+    for (i = 0, j = 0; i < table->capacity; i++) {
         for (p = table->buckets[i]; p != NULL; p = p->link) {
-            arr[j] = (void *)p->key;  // cast const
-            arr[j] = p->value;
+            arr[j++] = (void *)p->key;  // cast const
+            arr[j++] = p->value;
         }
     }
     arr[j] = end;

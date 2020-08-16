@@ -6,18 +6,6 @@
 #include "assert.h"
 #include "mem.h"
 
-struct node_t {
-    struct node_t* prev;
-    struct node_t* next;
-    void* data;
-};
-
-struct list_t {
-    struct node_t* tail;
-    struct node_t* head;
-    int len;
-};
-
 static struct node_t* new_node(void* x) {
     struct node_t* p;
     NEW(p);
@@ -197,7 +185,7 @@ void List_reverse(struct list_t* list) {
     }
 }
 
-extern bool List_remove(struct list_t* list, void* x) {
+extern int List_remove(struct list_t* list, void* x) {
     struct node_t* p;
     for (p = list->head; p != NULL; p = p->next) {
         if (p->data == x) {
@@ -205,14 +193,15 @@ extern bool List_remove(struct list_t* list, void* x) {
             p->next->prev = p->prev;
             list->len--;
             FREE(p);
-            return true;
+            return 1;
         }
     }
-    return false;
+    return 0;
 }
 
 void List_free(struct list_t** list) {
-    assert(list != NULL && *list != NULL);
+    assert(list != NULL);
+    assert(*list != NULL);
 
     struct node_t *p, *del;
     p = (*list)->head;

@@ -12,10 +12,9 @@
     of malloc() and free(), but the capsulation of them, I can't free the certain blocks.
 */
 
-#include <stdbool.h>  // bool type
-#include <stdio.h>    // fprintf() & FILE
-#include <stdlib.h>   // malloc() & free()
-#include <string.h>   // memset()
+#include <stdio.h>   // fprintf() & FILE
+#include <stdlib.h>  // malloc() & free()
+#include <string.h>  // memset()
 
 #include "align.h"
 #include "assert.h"
@@ -72,7 +71,7 @@ static FILE *mem_log_stm = NULL;
         1. Judge whether ptr is aligned by union align.
 */
 
-static inline bool is_aligned(const void *ptr) {
+static inline int is_aligned(const void *ptr) {
     return ((unsigned long)ptr % sizeof(union align)) == 0;
 }
 
@@ -201,19 +200,22 @@ static void logger(const void *ptr, const char *caller, const char *file, int li
     switch (invalid_operaion) {
         case INVALID_PTR:
             fprintf(mem_log_stm, "** invalid pointer argument\n");
-            fprintf(mem_log_stm, "%s(%x) called from %s:%d\n", caller, file, line);
+            fprintf(mem_log_stm, "%s(%lx) called from %s:%d\n",
+                    caller, (unsigned long)ptr, file, line);
             break;
         case FREE_FREED_MEM:
             bp = hash_table_find(ptr);
             fprintf(mem_log_stm, "** freeing free memory\n");
-            fprintf(mem_log_stm, "%s(%x) called from %s:%d\n", caller, file, line);
-            fprintf(mem_log_stm, "This block is %d bytes and was allocated from %s:%d",
+            fprintf(mem_log_stm, "%s(%lx) called from %s:%d\n",
+                    caller, (unsigned long)ptr, file, line);
+            fprintf(mem_log_stm, "This block is %ld bytes and was allocated from %s:%d",
                     bp->size, bp->file, bp->line);
             break;
         case RESIZE_UNALLOC_MEM:
             bp = hash_table_find(ptr);
             fprintf(mem_log_stm, "** resizing unallocated memory\n");
-            fprintf(mem_log_stm, "%s(%x) called from %s:%d\n", caller, file, line);
+            fprintf(mem_log_stm, "%s(%lx) called from %s:%d\n",
+                    caller, (unsigned long)ptr, file, line);
             break;
         default:
             break;
@@ -240,10 +242,10 @@ void *Mem_resize(void *ptr, long nbytes, const char *file, int line) {
 
     if (invalid_operaion != VALID_ARG) {
         if (mem_log_stm == NULL)
-            Except_raise(&assert_failed, file, line);
+            Except_raise(&assert_failed, file, line);  // abort
         else {
             logger(ptr, __func__, file, line);
-            return;  // remember
+            return ptr;  // do nothing
         }
     }
 
@@ -282,7 +284,7 @@ static void hash_table_delete(const void *ptr) {
         2. Used in Mem_free().
         3. Return whether it is merged.
 */
-static bool free_block_merge(struct descriptor *p) {
+static int free_block_merge(struct descriptor *p) {
     struct descriptor *bp, *last;
 
     bp = NULL;
@@ -295,10 +297,10 @@ static bool free_block_merge(struct descriptor *p) {
         bp->size += p->size;
         last->free = p->free;
         hash_table_delete(p->ptr);
-        return true;
+        return 1;
     }
 
-    return false;
+    return 0;
 }
 
 void Mem_free(void *ptr, const char *file, int line) {
@@ -325,7 +327,7 @@ void Mem_free(void *ptr, const char *file, int line) {
             }
         }
 
-        if (!free_block_merge(bp)) {          // If cannot be merged, insert in free_block_list.
+        if (free_block_merge(bp) == 0) {      // If cannot be merged, insert in free_block_list.
             bp->free = free_block_list.free;  // head insertion
             free_block_list.free = bp;
         }

@@ -1,5 +1,5 @@
 CC = gcc
-CFLAG = -Wall --std=c99
+CFLAG = -Wall -std=c99
 CMOCKA_FLAG = -lcmocka
 
 SRC = $(wildcard *.c)

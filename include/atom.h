@@ -9,7 +9,6 @@
 
 #ifndef ATOM_INCLUDE
 #define ATOM_INCLUDE
-#include <stdbool.h>
 
 /*
     Atom_init:
@@ -88,6 +87,6 @@ extern unsigned long Atom_hash(const char* str);
         2. It is simple, lhs != rhs.
 
 */
-extern bool Atom_cmp(const char* lhs, const char* rhs);
+extern int Atom_cmp(const char* lhs, const char* rhs);
 
 #endif
