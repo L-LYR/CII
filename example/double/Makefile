@@ -1,5 +1,5 @@
 CC = gcc
-CFLAG = -Wall --std=c99
+CFLAG = -Wall -std=c99
 
 SRC = $(wildcard *.c)
 OBJ = $(SRC:.c=.o)
