@@ -136,5 +136,6 @@ int main(int argc, char* argv[]) {
     }
     if (argc == 1) wf(NULL, stdin);
 
+    Atom_reset();
     return EXIT_SUCCESS;
 }
