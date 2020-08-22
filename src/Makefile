@@ -4,6 +4,7 @@
 
 ROOT := ..
 INCLUDE_PATH := $(ROOT)/include
+TARGET_PATH := $(ROOT)/lib
 
 CC := gcc
 C_FLAG := -Wall -std=c99
@@ -15,16 +16,16 @@ AR_FLAG := rcsv
 RM := rm
 RM_FLAG := -rf
 
-TARGET := libcii.a
+TARGET := $(TARGET_PATH)/libcii.a
 SRC := $(wildcard *.c)
-OBJ := $(patsubst %.c, %.o, $(SRC))
+OBJ := $(patsubst %.c, $(ROOT)/obj/%.o, $(SRC))
 
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
 	$(AR) $(AR_FLAG) $@ $^
 
-%.o: %.c
+$(ROOT)/obj/%.o: %.c
 	$(CC) $(C_FLAG) $(C_INC) -g -c $^ -o $@
 
 clean:

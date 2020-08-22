@@ -4,9 +4,12 @@
 
 ROOT := ../..
 INCLUDE_PATH := $(ROOT)/include
-LIB_PATH := $(ROOT)/src
+
+LIB_PATH := $(ROOT)/lib
 LIB_NAME := cii
-TARGET := wf
+
+TARGET_PATH := $(ROOT)/bin
+TARGET := $(TARGET_PATH)/wf
 
 CC := gcc
 C_FLAG := -Wall -std=c99
