@@ -39,11 +39,11 @@ struct table_t *Table_create(int hint,
     // table->cmp = ((cmp == NULL) ? (Atom_cmp) : (cmp));
     // table->hash = ((hash == NULL) ? (Atom_hash) : (hash));
     if (cmp == NULL)
-        table->cmp = Atom_cmp;
+        table->cmp = (int (*)(const void *, const void *))Atom_cmp;  // avoid warnings
     else
         table->cmp = cmp;
     if (hash == NULL)
-        table->hash = Atom_hash;
+        table->hash = (unsigned long (*)(const void *))Atom_hash;  // avoid warnings
     else
         table->hash = hash;
     table->buckets = (struct binding **)(table + 1);
@@ -61,7 +61,7 @@ void Table_free(struct table_t **table) {
     if ((*table)->size > 0) {
         int i;
         struct binding *p, *q;
-        for (i = 0; i < (*table)->size; i++) {
+        for (i = 0; i < (*table)->capacity; i++) {
             for (p = (*table)->buckets[i]; p != NULL; p = q) {
                 q = p->link;
                 FREE(p);
@@ -145,7 +145,7 @@ void Table_map(struct table_t *table,
     assert(table != NULL);
     assert(apply != NULL);
     stamp = table->time_stamp;
-    for (i = 0; i < table->size; i++) {
+    for (i = 0; i < table->capacity; i++) {
         for (p = table->buckets[i]; p != NULL; p = p->link) {
             apply(p->key, &(p->value), cl);
             // table can’t be changed while Table_map is visiting its bindings.
