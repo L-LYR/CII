@@ -1,8 +1,8 @@
 #include "atom.h"
 
-#include <limits.h>   // LONG_MAX & LONG_MIN
-#include <stdarg.h>   // va_list & va_start() & va_end() & va_arg()
-#include <string.h>   // strcmp() & strlen() & memset()
+#include <limits.h>  // LONG_MAX & LONG_MIN
+#include <stdarg.h>  // va_list & va_start() & va_end() & va_arg()
+#include <string.h>  // strcmp() & strlen() & memset()
 
 #include "assert.h"
 #include "mem.h"
