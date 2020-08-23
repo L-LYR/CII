@@ -1,6 +1,6 @@
 /*
     Associative table is a set of key-value pairs.
-    This table looks like a hash table actually.
+    This table looks like a unordered_map actually.
 */
 
 #ifndef TABLE_INCLUDE
