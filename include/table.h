@@ -28,7 +28,7 @@ struct table_t {
 
 /*
     Table_create:
-        1. table_t will be allocated and deallocated by Table_create().
+        1. table_t will be allocated by Table_create().
         2. hint is an estimate of the number of entries that the new 
         table is expected to hold. But all tables can hold an arbitrary
         number of entries ragardless of the value of hint. hint > 0.
@@ -80,7 +80,6 @@ extern void *Table_remove(struct table_t *table, const void *key);
 /*
     Table_map:
         1. Call the function apply for every key-value pair in an unspecified order.
-
 */
 extern void Table_map(struct table_t *table,
                       void (*apply)(const void *key, void **value, void *cl),
