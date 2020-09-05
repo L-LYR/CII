@@ -80,7 +80,7 @@ int Set_has(struct set_t *set, const void *member) {
     assert(set != NULL);
     assert(member != NULL);
 
-    h = (*set->hash)(member) % set->size;
+    h = (*set->hash)(member) % set->capacity;
     for (p = set->buckets[h]; p != NULL; p = p->link) {
         if ((*set->cmp)(member, p->value) == 0) {
             break;
@@ -97,7 +97,7 @@ void Set_put(struct set_t *set, const void *member) {
     assert(set != NULL);
     assert(member != NULL);
 
-    h = (*set->hash)(member) % set->size;
+    h = (*set->hash)(member) % set->capacity;
     for (p = set->buckets[h]; p != NULL; p = p->link) {
         if ((*set->cmp)(member, p->value) == 0) {
             break;
@@ -192,7 +192,7 @@ static struct set_t *Set_copy(struct set_t *t) {
     int i;
     // dup and t may have different capacity
     // dup.capacity >= t.capacity
-    dup = Set_new(t->capacity, t->cmp, t->hash);
+    dup = Set_create(t->capacity, t->cmp, t->hash);
     for (i = 0; i < t->size; ++i) {
         for (p = t->buckets[i]; p != NULL; p = p->link) {
             member = p->value;
@@ -240,7 +240,7 @@ struct set_t *Set_inter(struct set_t *s, struct set_t *t) {
     } else if (t == NULL) {
         return Set_create(s->capacity, s->cmp, s->hash);
     } else if (s->size < t->size) {
-        return Set_Inter(t, s);  // to traverse the smaller set
+        return Set_inter(t, s);  // to traverse the smaller set
     } else {
         assert(s->cmp == t->cmp);
         assert(s->hash == t->hash);
@@ -273,7 +273,7 @@ struct set_t *Set_minus(struct set_t *s, struct set_t *t) {
     // return s - t;
     if (s == NULL) {  // if s = {}, then s - t = {}
         assert(t != NULL);
-        return Set_new(t->capacity, t->cmp, t->hash);
+        return Set_create(t->capacity, t->cmp, t->hash);
     } else if (t == NULL) {  // if t = {}, then s - t = s
         return Set_copy(s);
     } else {

@@ -23,6 +23,7 @@ SRC := $(wildcard *.c)
 OBJ := $(patsubst %.c, $(ROOT)/obj/%.o, $(SRC))
 
 all: $(TARGET)
+	@echo "compile done..."
 
 $(TARGET): $(OBJ)
 	$(AR) $(AR_FLAG) $@ $^
