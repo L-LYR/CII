@@ -16,6 +16,7 @@ struct list_t {
     struct node_t* head;
     int len;
 };
+
 /*
     List_create:
         1. Creation of a list.

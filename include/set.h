@@ -58,11 +58,13 @@ extern void Set_free(struct set_t **set);
         1. Return 1, if the set has this member. Otherwise, return 0.
 */
 extern int Set_has(struct set_t *set, const void *member);
+
 /*
     Set_put:
         1. Put the member into the set, unless it has already been in the set.
 */
 extern void Set_put(struct set_t *set, const void *member);
+
 /*
     Set_remove:
         1. Remove the member from the set and return it. If not in, return NULL.
@@ -76,6 +78,7 @@ extern void *Set_remove(struct set_t *set, const void *member);
 extern void Set_map(struct set_t *set,
                     void (*apply)(const void *member, void *cl),
                     void *cl);
+
 /*
     Set_to_array:
         1. Return a pointer to an N+1-element array that holds the
