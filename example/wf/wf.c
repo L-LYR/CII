@@ -1,75 +1,21 @@
 #include <atom.h>
 #include <ctype.h>
 #include <errno.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "assert.h"
 #include "atom.h"
+#include "io.h"
 #include "mem.h"
 #include "table.h"
 
-/*
-    get_word:
-        1. Consume the next word in the file opened on fp,
-        store it as a null-terminated string in but[0,size-1],
-        and return true. 
-        2. When reaching the end of the file without consuming
-        a word, return false.
-        3. More generally, a word begins with a charactor in a 
-        first set followed by zero or more charactors in a rest
-        set. Functions first() and rest() test a charactor for 
-        membership in first and rest. If the charactor is in the 
-        set, both of them will return nonzero value.
-        4. If a word is longer than size-2 charactors, the excess
-        charactors are discarded.
-        5. size > 1 
-        6. fp buf first rest != NULL
-*/
-bool get_word(FILE* fp, char* buf, int size,
-              bool (*first)(int c),
-              bool (*rest)(int c)) {
-    assert(fp != NULL);
-    assert(buf != NULL);
-    assert(size > 1);
-    assert(first != NULL);
-    assert(rest != NULL);
-
-    int i, c;
-    // get first
-    c = getc(fp);
-    i = 0;
-    while (c != EOF) {
-        if (first(c)) {
-            if (i < size - 1) buf[i++] = c;
-            c = getc(fp);
-            break;
-        }
-        c = getc(fp);
-    }
-    // get rest
-    while (c != EOF && rest(c)) {
-        if (i < size - 1) buf[i++] = c;
-        c = getc(fp);
-    }
-    // set null-terminated
-    if (i < size)
-        buf[i] = '\0';
-    else
-        buf[size - 1] = '\0';
-
-    if (c != EOF) ungetc(c, fp);
-
-    return (i > 0);
-}
-
-bool first(int c) {
+int first(int c) {
     return isalpha(c);
 }
 
-bool rest(int c) {
+int rest(int c) {
     return isalpha(c) || c == '-';
 }
 
