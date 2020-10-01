@@ -10,22 +10,28 @@
 #include "set.h"
 #include "table.h"
 
+//
 static int line_num;
+
+// For get_word()
+// Identifier begins with a letter or a '_'.
 int first(int c) {
     if (c == '\n') {
         line_num++;
     }
     return isalpha(c) || c == '_';
 }
-
+// The rest part is made up with digits, letters and '_'s.
 int rest(int c) {
     return isalpha(c) || c == '_' || isdigit(c);
 }
 
+// For identifier table and file table
 int cmp_str(const void* x, const void* y) {
     return strcmp(*(char**)x, *(char**)y);
 }
 
+// For qsort()
 int sort_int(const void* x, const void* y) {
     if (**(int**)x < **(int**)y)
         return -1;
@@ -35,6 +41,7 @@ int sort_int(const void* x, const void* y) {
         return 0;
 }
 
+// For int set
 int cmp_int(const void* x, const void* y) {
     return sort_int(&x, &y);
 }
@@ -43,15 +50,18 @@ unsigned long hash_int(const void* x) {
     return *(unsigned long*)x;
 }
 
+// Free the ref-count set of each identifier
 void int_set_free(const void* member, void* cl) {
     free((void*)member);
 }
 
+// Free the secondary table for file
 void set_table_free(const void* key, void** value, void* cl) {
     Set_map(*value, int_set_free, NULL);
     Set_free((struct set_t**)value);
 }
 
+// Free the first table for identifier
 void table_table_free(const void* key, void** value, void* cl) {
     Table_map(*value, set_table_free, NULL);
     Table_free((struct table_t**)value);
@@ -71,7 +81,14 @@ void print(struct table_t* files) {
         qsort(lines, ((struct set_t*)array[i + 1])->size,
               sizeof(*lines), sort_int);
         for (j = 0; lines[j] != NULL; j++) {
-            printf(" %d", *(int*)lines[j]);
+            if (j > 0 && *(int*)lines[j] - 1 == *(int*)lines[j - 1]) {
+                if (lines[j + 1] == NULL || *(int*)lines[j] + 1 != *(int*)lines[j + 1]) {
+                    printf("-");
+                    printf("%d", *(int*)lines[j]);
+                }
+            } else {
+                printf(" %d", *(int*)lines[j]);
+            }
         }
         FREE(lines);
         printf("\n");
