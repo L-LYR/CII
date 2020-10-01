@@ -3,11 +3,13 @@
     Basic operations on a set are testing for membership,
     adding members, intersection, difference, and symmetric
     difference.
-b
 */
 
 #ifndef SET_INCLUDE
 #define SET_INCLUDE
+
+typedef int (*cmp_t)(const void *, const void *);
+typedef unsigned long (*hash_t)(const void *);
 
 struct member {
     struct member *link;
@@ -21,15 +23,15 @@ struct set_t {
     int size;
     unsigned long time_stamp;
     // function pointers
-    int (*cmp)(const void *x, const void *y);
-    unsigned long (*hash)(const void *x);
+    cmp_t cmp;
+    hash_t hash;
     // flexible array members
     struct member **buckets;
 };
 
 /*
     Set_create:
-        1. set_t will be allocated by Table_create().
+        1. set_t will be allocated by Set_create().
         2. hint is an estimate of the number of entries that the new 
         set is expected to hold. But all sets can hold an arbitrary
         number of entries ragardless of the value of hint. hint > 0.
@@ -42,9 +44,7 @@ struct set_t {
             3) Each set can have its own cmp() and hash().
             4) In default, it will use Atom_hash() and Atom_cmp().
 */
-extern struct set_t *Set_create(int hint,
-                                int (*cmp)(const void *x, const void *y),
-                                unsigned long (*hash)(const void *x));
+extern struct set_t *Set_create(int hint, cmp_t cmp, hash_t hash);
 
 /*
     Set_free:
@@ -61,7 +61,8 @@ extern int Set_has(struct set_t *set, const void *member);
 
 /*
     Set_put:
-        1. Put the member into the set, unless it has already been in the set.
+        1. Put the member into the set.
+        2. If it has already been in the set, overwrite the previous one.
 */
 extern void Set_put(struct set_t *set, const void *member);
 
@@ -83,7 +84,7 @@ extern void Set_map(struct set_t *set,
     Set_to_array:
         1. Return a pointer to an N+1-element array that holds the
         N elements of set in an arbitrary order.
-        2. Other features is like List_to_array() 2&3&4.
+        2. Other features are like List_to_array() 2&3&4.
 */
 extern void **Set_to_array(struct set_t *set, void *end);
 

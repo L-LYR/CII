@@ -9,7 +9,7 @@
 #include "mem.h"
 
 // Size of set (the same with table)
-// Table_create will choose the greatest value which is less than hint
+// Set_create will choose the greatest value which is less than hint
 static int primes[] = {
     509,
     509,    // 512   = 2 ^ 9
@@ -23,9 +23,7 @@ static int primes[] = {
     INT_MAX,
 };
 
-struct set_t *Set_create(int hint,
-                         int (*cmp)(const void *x, const void *y),
-                         unsigned long (*hash)(const void *x)) {
+struct set_t *Set_create(int hint, cmp_t cmp, hash_t hash) {
     struct set_t *set;
     int i;
 
@@ -39,12 +37,12 @@ struct set_t *Set_create(int hint,
     set = ALLOC(sizeof(*set) + hint * sizeof(set->buckets[0]));
     set->capacity = hint;
     if (cmp == NULL) {
-        set->cmp = (int (*)(const void *, const void *))Atom_cmp;  // avoid warnings
+        set->cmp = (cmp_t)Atom_cmp;  // avoid warnings
     } else {
         set->cmp = cmp;
     }
     if (hash == NULL) {
-        set->hash = (unsigned long (*)(const void *))Atom_hash;  // avoid warnings
+        set->hash = (hash_t)Atom_hash;  // avoid warnings
     } else {
         set->hash = hash;
     }
@@ -167,7 +165,7 @@ void **Set_to_array(struct set_t *set, void *end) {
     assert(set != NULL);
 
     arr = ALLOC((set->size + 1) * sizeof(*arr));
-    for (i = 0; i < set->capacity; i++) {
+    for (i = 0, j = 0; i < set->capacity; i++) {
         for (p = set->buckets[i]; p != NULL; p = p->link) {
             arr[j++] = (void *)p->value;
         }

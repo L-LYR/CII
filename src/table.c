@@ -22,9 +22,7 @@ static int primes[] = {
     INT_MAX,
 };
 
-struct table_t *Table_create(int hint,
-                             int (*cmp)(const void *x, const void *y),
-                             unsigned long (*hash)(const void *key)) {
+struct table_t *Table_create(int hint, cmp_t cmp, hash_t hash) {
     struct table_t *table;
     int i;
 
@@ -39,11 +37,11 @@ struct table_t *Table_create(int hint,
     // table->cmp = ((cmp == NULL) ? (Atom_cmp) : (cmp));
     // table->hash = ((hash == NULL) ? (Atom_hash) : (hash));
     if (cmp == NULL)
-        table->cmp = (int (*)(const void *, const void *))Atom_cmp;  // avoid warnings
+        table->cmp = (cmp_t)Atom_cmp;  // avoid warnings
     else
         table->cmp = cmp;
     if (hash == NULL)
-        table->hash = (unsigned long (*)(const void *))Atom_hash;  // avoid warnings
+        table->hash = (hash_t)Atom_hash;  // avoid warnings
     else
         table->hash = hash;
     table->buckets = (struct binding **)(table + 1);

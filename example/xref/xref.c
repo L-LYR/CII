@@ -47,7 +47,7 @@ int cmp_int(const void* x, const void* y) {
 }
 
 unsigned long hash_int(const void* x) {
-    return *(unsigned long*)x;
+    return (unsigned long)*(int*)x;
 }
 
 // Free the ref-count set of each identifier

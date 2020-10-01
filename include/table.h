@@ -6,6 +6,9 @@
 #ifndef TABLE_INCLUDE
 #define TABLE_INCLUDE
 
+typedef int (*cmp_t)(const void *, const void *);
+typedef unsigned long (*hash_t)(const void *);
+
 struct binding {
     struct binding *link;
     const void *key;
@@ -19,9 +22,8 @@ struct table_t {
     unsigned long time_stamp;
 
     // function pointers
-    int (*cmp)(const void *x, const void *y);
-    unsigned long (*hash)(const void *key);
-
+    cmp_t cmp;
+    hash_t hash;
     // flexible array members
     struct binding **buckets;
 };
@@ -41,9 +43,7 @@ struct table_t {
             3) Each table can have its own cmp() and hash().
             4) In default, it will use Atom_hash() and Atom_cmp().
 */
-extern struct table_t *Table_create(int hint,
-                                    int (*cmp)(const void *x, const void *y),
-                                    unsigned long (*hash)(const void *key));
+extern struct table_t *Table_create(int hint,cmp_t cmp,hash_t hash);
 
 /*
     Table_free:
@@ -91,7 +91,7 @@ extern void Table_map(struct table_t *table,
         and returns a pointer to the first element.
         2. The index of key is 2i+1 which the index of respective value is 2i.
         3. table can’t be changed while Table_map is visiting its bindings.
-        4. Other features is like List_to_array() 2&3&4.
+        4. Other features are like List_to_array() 2&3&4.
 */
 extern void **Table_to_array(struct table_t *table, void *end);
 
