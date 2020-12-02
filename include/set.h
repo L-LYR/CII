@@ -91,7 +91,6 @@ extern void **Set_to_array(struct set_t *set, void *end);
 // no need to implement
 // extern int Set_length(struct set_t* set);
 
-// Union operation
 extern struct set_t *Set_union(struct set_t *s, struct set_t *t);
 extern struct set_t *Set_inter(struct set_t *s, struct set_t *t);
 extern struct set_t *Set_minus(struct set_t *s, struct set_t *t);
